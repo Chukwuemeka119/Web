@@ -3,14 +3,11 @@ body{
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    background: linear-gradient(rgb(126, 45, 151), rgba(212, 4, 4, 0.671));
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
+    background-color:  #b2ad7f;
 }
 /* Styling Home Page Body */
 .home{
-    background-color: white;
+    background-color:  #b2ad7f;
 }
 /* Home header */
 header{
@@ -25,7 +22,7 @@ header{
 }
 /* Styling the word 'Michael Web' */
 .headlogo{
-    background: -webkit-linear-gradient(rgb(188, 12,241), rgb(212, 4, 4));
+    background: -webkit-linear-gradient( #6b5b95, rgb(212, 4, 4));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 
@@ -39,7 +36,7 @@ header{
 }
 /* Styling the dropdown Menu */
 #dropbtn {
-    background-color: #fc3a74;
+    background-color:#878f99;
     color: white;
     padding: 16px;
     font-size: 16px;
@@ -58,7 +55,7 @@ header{
 #dropdown-content {
     display: none;
     position: absolute;
-    background:linear-gradient(rgb(192, 7, 7), purple, pink);
+    background-color: gainsboro;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -71,7 +68,7 @@ header{
     display: block;
 }
 
-#dropdown-content a:hover {background:linear-gradient(rgba(124, 10, 10, 0.788), rgba(128, 0, 128, 0.795), rgba(255, 192, 203, 0.747))}
+#dropdown-content a:hover {background-color: #a2b9bc;}
 
 #dropdown:hover #dropdown-content {
     display: block;
@@ -80,7 +77,7 @@ header{
 }
 
 #dropdown:hover #dropbtn {
-    background-color: #fc3a74d5;
+    background-color: #a2b9bc;
 }
 /* Styling Content */
 #content{
