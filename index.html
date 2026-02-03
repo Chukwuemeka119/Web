@@ -1,86 +1,3 @@
-<?php
-  // PHP code
-  $config = [
-    'site_url' => 'https://chukwuemeka119.github.io/Michaelweb/',
-    'welcome_text' => 'Welcome to our site!',
-    'subtext' => 'We\'re glad you\'re here 😊',
-    'link_text' => 'Enter Site',
-    'splash_duration' => 5000, // in milliseconds
-    'theme' => [
-      'primary_color' => '#333',
-      'secondary_color' => '#555',
-      'text_color' => '#fff',
-    ],
-    'quotes' => [
-      'Believe you can and you\'re halfway there. - Theodore Roosevelt',
-      'The only way to do great work is to love what you do. - Steve Jobs',
-      'Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill',
-      'Don\'t watch the clock; do what it does. Keep going. - Sam Levenson',
-      'You miss 100% of the shots you don\'t take. - Wayne Gretzky',
-    ],
-  ];
-
-  // Function to generate CSS styles
-  function generate_styles($config) {
-    $styles = '';
-    $styles .= 'body { background-color: ' . $config['theme']['primary_color'] . '; }';
-    $styles .= '.splash-screen { background: linear-gradient(45deg, ' . $config['theme']['primary_color'] . ', ' . $config['theme']['secondary_color'] . '); }';
-    $styles .= '.splash-link { color: ' . $config['theme']['text_color'] . '; border-color: ' . $config['theme']['text_color'] . '; }';
-    $styles .= '.splash-link:hover { background-color: ' . $config['theme']['text_color'] . '; color: ' . $config['theme']['primary_color'] . '; }';
-    return $styles;
-  }
-
-  // Function to generate JavaScript code
-  function generate_script($config) {
-    $script = '';
-    $script .= 'setTimeout(() => { document.getElementById(\'splash-screen\').classList.add(\'hide\'); }, ' . $config['splash_duration'] . ');';
-    $script .= 'document.querySelector(\'.splash-link\').addEventListener(\'click\', (e) => { e.preventDefault(); document.getElementById(\'splash-screen\').classList.add(\'hide\'); setTimeout(() => { window.location.href = \'' . $config['site_url'] . '\'; }, 1000); });';
-    return $script;
-  }
-
-  // Get a random quote
-  $random_quote = $config['quotes'][array_rand($config['quotes'])];
-
-  // Get current time and date
-  $current_time = date('h:i A');
-  $current_date = date('d M Y');
-
-  // Get IP-based location
-  $ip = $_SERVER['REMOTE_ADDR'];
-  $geo_data = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=$ip"), true);
-  $location = $geo_data['geoplugin_city'] . ', ' . $geo_data['geoplugin_countryName'];
-
-// Function to generate JavaScript code
-function generate_script($config) {
-  $script = '';
-  $script .= 'setTimeout(() => { document.getElementById(\'splash-screen\').classList.add(\'hide\'); }, ' . $config['splash_duration'] . ');';
-  $script .= 'document.querySelector(\'.splash-link\').addEventListener(\'click\', (e) => { e.preventDefault(); document.getElementById(\'splash-screen\').classList.add(\'hide\'); setTimeout(() => { window.location.href = \'' . $config['site_url'] . '\'; }, 1000); });';
-  $script .= '
-    // Get user\'s location using the Geolocation API
-    navigator.geolocation.getCurrentPosition((position) => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-
-      // Use the Google Maps Geocoding API to get the location name
-      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
-        .then((response) => response.json())
-        .then((data) => {
-          const location = data.results[0].formatted_address;
-          document.querySelector(\'.splash-location\').innerText = location;
-        })
-        .catch((error) => console.error(error));
-    }, (error) => {
-      console.error(error);
-    });
-  ';
-  return $script;
-}
-
-$ip = $_SERVER['REMOTE_ADDR'];
-$geo_data = json_decode(file_get_contents('http://ip-api.com/json/'.$ip), true);
-$country = $geo_data['country'];
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,13 +5,13 @@ $country = $geo_data['country'];
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Splash Screen</title>
   <style>
-    /* CSS styles */
-    <?php echo generate_styles($config); ?>
     body {
       margin: 0;
       padding: 0;
       overflow: hidden;
+      background-color: #333;
     }
+
     .splash-screen {
       position: fixed;
       top: 0;
@@ -106,30 +23,37 @@ $country = $geo_data['country'];
       justify-content: center;
       align-items: center;
       font-size: 24px;
+      background: linear-gradient(45deg, #333, #555);
+      color: #fff;
       transition: opacity 1s, transform 1s;
       transform: scale(1);
     }
+
     .splash-screen.hide {
       opacity: 0;
       transform: scale(1.2);
       pointer-events: none;
     }
+
     .splash-text {
       font-size: 48px;
       font-weight: bold;
       margin-bottom: 20px;
       animation: slide-in 1s;
     }
+
     .splash-subtext {
       font-size: 24px;
       margin-bottom: 20px;
       animation: fade-in 2s;
     }
+
     .splash-quote {
       font-size: 18px;
       margin-bottom: 40px;
       animation: fade-in 3s;
     }
+
     .splash-link {
       font-size: 18px;
       text-decoration: none;
@@ -137,17 +61,27 @@ $country = $geo_data['country'];
       border-radius: 5px;
       transition: background-color 0.5s, color 0.5s;
       animation: pulse 2s infinite;
+      color: #fff;
+      border: 1px solid #fff;
     }
+
+    .splash-link:hover {
+      background-color: #fff;
+      color: #333;
+    }
+
     .splash-time {
       font-size: 18px;
       margin-top: 20px;
       animation: fade-in 4s;
     }
+
     .splash-location {
       font-size: 18px;
       margin-top: 10px;
       animation: fade-in 5s;
     }
+
     @keyframes slide-in {
       0% {
         transform: translateY(-100px);
@@ -158,6 +92,7 @@ $country = $geo_data['country'];
         opacity: 1;
       }
     }
+
     @keyframes fade-in {
       0% {
         opacity: 0;
@@ -166,6 +101,7 @@ $country = $geo_data['country'];
         opacity: 1;
       }
     }
+
     @keyframes pulse {
       0% {
         transform: scale(1);
@@ -181,48 +117,69 @@ $country = $geo_data['country'];
 </head>
 <body>
   <div class="splash-screen" id="splash-screen">
-      
-<div class="splash-subtext">Hello, <?php echo $country; ?>!</div>
-    <div class="splash-text"><?php echo $config['welcome_text']; ?></div>
-    <div class="splash-subtext"><?php echo $config['subtext']; ?></div>
-    <div class="splash-quote">"<?php echo $random_quote; ?>"</div>
-    <a href="<?php echo $config['site_url']; ?>" class="splash-link"><?php echo $config['link_text']; ?></a>
-    <div class="splash-time"><?php echo $current_time . ' | ' . $current_date; ?></div>
-    <div class="splash-location"><?php echo $location; ?></div>
+    <div class="splash-subtext">Hello, <span id="country"></span>!</div>
+    <div class="splash-text">Welcome to Michael Web!</div>
+    <div class="splash-subtext">We're glad you're here 😊</div>
+    <div class="splash-quote" id="quote"></div>
+    <a href="https://michaelweb.com.ng" class="splash-link">Enter Site</a>
+    <div class="splash-time" id="time"></div>
+    <div class="splash-location" id="location"></div>
   </div>
 
   <script>
+    // Get current time and date
+    const currentTime = new Date().toLocaleTimeString();
+    const currentDate = new Date().toLocaleDateString();
+    document.getElementById('time').innerText = `${currentTime} | ${currentDate}`;
+
     // Get user's location using the Geolocation API
-navigator.geolocation.getCurrentPosition((position) => {
-  const latitude = position.coords.latitude;
-  const longitude = position.coords.longitude;
+    navigator.geolocation.getCurrentPosition((position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
 
-  // Use the Google Maps Geocoding API to get the location name
-  fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
-    .then((response) => response.json())
-    .then((data) => {
-      const location = data.results[0].formatted_address;
-      document.querySelector('.splash-location').innerText = location;
-    })
-    .catch((error) => console.error(error));
-}, (error) => {
-  console.error(error);
-});
+      // Use the Google Maps Geocoding API to get the location name
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
+        .then((response) => response.json())
+        .then((data) => {
+          const location = data.results[0].formatted_address;
+          document.getElementById('location').innerText = location;
+        })
+        .catch((error) => console.error(error));
+    }, (error) => {
+      console.error(error);
+    });
 
-// Hide splash screen after duration
-setTimeout(() => {
-  document.getElementById('splash-screen').classList.add('hide');
-}, 5000);
+    // Get user's country using the IP-API
+    fetch('https://ip-api.com/json')
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById('country').innerText = data.country;
+      })
+      .catch((error) => console.error(error));
 
-// Add event listener to link
-document.querySelector('.splash-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('splash-screen').classList.add('hide');
-  setTimeout(() => {
-    window.location.href = 'https://example.com';
-  }, 1000);
-});
-    <?php echo generate_script($config); ?>
+    // Get a random quote
+    const quotes = [
+      'Believe you can and you\'re halfway there. - Theodore Roosevelt',
+      'The only way to do great work is to love what you do. - Steve Jobs',
+      'Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill',
+      'Don\'t watch the clock; do what it does. Keep going. - Sam Levenson',
+      'You miss 100% of the shots you don\'t take. - Wayne Gretzky',
+    ];
+    document.getElementById('quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+
+    // Hide splash screen after duration
+    setTimeout(() => {
+      document.getElementById('splash-screen').classList.add('hide');
+    }, 100000);
+
+    // Add event listener to link
+    document.querySelector('.splash-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('splash-screen').classList.add('hide');
+      setTimeout(() => {
+        window.location.href = 'https://chukwuemeka119.github.io/Michaelweb/';
+      }, 1000);
+    });
   </script>
 </body>
 </html>
