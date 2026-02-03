@@ -1,79 +1,228 @@
+<?php
+  // PHP code
+  $config = [
+    'site_url' => 'https://chukwuemeka119.github.io/Michaelweb/',
+    'welcome_text' => 'Welcome to our site!',
+    'subtext' => 'We\'re glad you\'re here 😊',
+    'link_text' => 'Enter Site',
+    'splash_duration' => 5000, // in milliseconds
+    'theme' => [
+      'primary_color' => '#333',
+      'secondary_color' => '#555',
+      'text_color' => '#fff',
+    ],
+    'quotes' => [
+      'Believe you can and you\'re halfway there. - Theodore Roosevelt',
+      'The only way to do great work is to love what you do. - Steve Jobs',
+      'Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill',
+      'Don\'t watch the clock; do what it does. Keep going. - Sam Levenson',
+      'You miss 100% of the shots you don\'t take. - Wayne Gretzky',
+    ],
+  ];
+
+  // Function to generate CSS styles
+  function generate_styles($config) {
+    $styles = '';
+    $styles .= 'body { background-color: ' . $config['theme']['primary_color'] . '; }';
+    $styles .= '.splash-screen { background: linear-gradient(45deg, ' . $config['theme']['primary_color'] . ', ' . $config['theme']['secondary_color'] . '); }';
+    $styles .= '.splash-link { color: ' . $config['theme']['text_color'] . '; border-color: ' . $config['theme']['text_color'] . '; }';
+    $styles .= '.splash-link:hover { background-color: ' . $config['theme']['text_color'] . '; color: ' . $config['theme']['primary_color'] . '; }';
+    return $styles;
+  }
+
+  // Function to generate JavaScript code
+  function generate_script($config) {
+    $script = '';
+    $script .= 'setTimeout(() => { document.getElementById(\'splash-screen\').classList.add(\'hide\'); }, ' . $config['splash_duration'] . ');';
+    $script .= 'document.querySelector(\'.splash-link\').addEventListener(\'click\', (e) => { e.preventDefault(); document.getElementById(\'splash-screen\').classList.add(\'hide\'); setTimeout(() => { window.location.href = \'' . $config['site_url'] . '\'; }, 1000); });';
+    return $script;
+  }
+
+  // Get a random quote
+  $random_quote = $config['quotes'][array_rand($config['quotes'])];
+
+  // Get current time and date
+  $current_time = date('h:i A');
+  $current_date = date('d M Y');
+
+  // Get IP-based location
+  $ip = $_SERVER['REMOTE_ADDR'];
+  $geo_data = json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=$ip"), true);
+  $location = $geo_data['geoplugin_city'] . ', ' . $geo_data['geoplugin_countryName'];
+
+// Function to generate JavaScript code
+function generate_script($config) {
+  $script = '';
+  $script .= 'setTimeout(() => { document.getElementById(\'splash-screen\').classList.add(\'hide\'); }, ' . $config['splash_duration'] . ');';
+  $script .= 'document.querySelector(\'.splash-link\').addEventListener(\'click\', (e) => { e.preventDefault(); document.getElementById(\'splash-screen\').classList.add(\'hide\'); setTimeout(() => { window.location.href = \'' . $config['site_url'] . '\'; }, 1000); });';
+  $script .= '
+    // Get user\'s location using the Geolocation API
+    navigator.geolocation.getCurrentPosition((position) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      // Use the Google Maps Geocoding API to get the location name
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
+        .then((response) => response.json())
+        .then((data) => {
+          const location = data.results[0].formatted_address;
+          document.querySelector(\'.splash-location\').innerText = location;
+        })
+        .catch((error) => console.error(error));
+    }, (error) => {
+      console.error(error);
+    });
+  ';
+  return $script;
+}
+
+$ip = $_SERVER['REMOTE_ADDR'];
+$geo_data = json_decode(file_get_contents('http://ip-api.com/json/'.$ip), true);
+$country = $geo_data['country'];
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Michael Web &trade; </title>
-    <link rel="icon" type="image/x-icon" href="Pictures/favicon.ico">
-
-    <link rel="stylesheet" href="Style/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Splash Screen</title>
+  <style>
+    /* CSS styles */
+    <?php echo generate_styles($config); ?>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      transition: opacity 1s, transform 1s;
+      transform: scale(1);
+    }
+    .splash-screen.hide {
+      opacity: 0;
+      transform: scale(1.2);
+      pointer-events: none;
+    }
+    .splash-text {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      animation: slide-in 1s;
+    }
+    .splash-subtext {
+      font-size: 24px;
+      margin-bottom: 20px;
+      animation: fade-in 2s;
+    }
+    .splash-quote {
+      font-size: 18px;
+      margin-bottom: 40px;
+      animation: fade-in 3s;
+    }
+    .splash-link {
+      font-size: 18px;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background-color 0.5s, color 0.5s;
+      animation: pulse 2s infinite;
+    }
+    .splash-time {
+      font-size: 18px;
+      margin-top: 20px;
+      animation: fade-in 4s;
+    }
+    .splash-location {
+      font-size: 18px;
+      margin-top: 10px;
+      animation: fade-in 5s;
+    }
+    @keyframes slide-in {
+      0% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+  <div class="splash-screen" id="splash-screen">
+      
+<div class="splash-subtext">Hello, <?php echo $country; ?>!</div>
+    <div class="splash-text"><?php echo $config['welcome_text']; ?></div>
+    <div class="splash-subtext"><?php echo $config['subtext']; ?></div>
+    <div class="splash-quote">"<?php echo $random_quote; ?>"</div>
+    <a href="<?php echo $config['site_url']; ?>" class="splash-link"><?php echo $config['link_text']; ?></a>
+    <div class="splash-time"><?php echo $current_time . ' | ' . $current_date; ?></div>
+    <div class="splash-location"><?php echo $location; ?></div>
+  </div>
 
-    </header>
-    <main>
-        <section id="home" class="hero">
-            <h1>Welcome</h1>
-            <p>to</p>
-            <h1>  Michael  Web </h1>
-        </section>
-        <section id="about">
-            <h1>About Us</h1>
-            <h2> Michael Web </h2>
-            <p> 
-                Michael Web is a cutting-edge digital platform that embodies the creative vision of Osita Emeka Michael, a talented and innovative web developer. With a passion for crafting intuitive and engaging online experiences, Osita has poured his expertise and heart into building Michael Web as a showcase of his skills and a testament to his dedication to the craft.
+  <script>
+    // Get user's location using the Geolocation API
+navigator.geolocation.getCurrentPosition((position) => {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
 
-                Through sleek design, seamless functionality, and a focus on user-centric solutions, Michael Web aims to deliver an unparalleled online presence for individuals and businesses alike. Whether you're looking to establish a strong digital footprint or elevate your existing online presence, Michael Web is poised to help you achieve your goals with style and sophistication.
+  // Use the Google Maps Geocoding API to get the location name
+  fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
+    .then((response) => response.json())
+    .then((data) => {
+      const location = data.results[0].formatted_address;
+      document.querySelector('.splash-location').innerText = location;
+    })
+    .catch((error) => console.error(error));
+}, (error) => {
+  console.error(error);
+});
 
-                With a keen eye for detail and a commitment to staying at the forefront of web development trends, Osita continues to push the boundaries of what's possible with Michael Web, ensuring that every project is a masterpiece that leaves a lasting impression. </p>
-            <h2>Osita Emeka - Founder Michael Web</h2>
-            <p> 
-Osita Emeka Michael is a driven and innovative web developer with a passion for crafting exceptional digital experiences. With a solid foundation in Information Technology, courtesy of Valor Information Technologies, Osita has honed his skills in web development and continues to push the boundaries of creativity and innovation.
+// Hide splash screen after duration
+setTimeout(() => {
+  document.getElementById('splash-screen').classList.add('hide');
+}, 5000);
 
-As the mastermind behind Michael Web, Osita brings his unique perspective and expertise to every project, ensuring that each digital solution is tailored to meet the needs of his clients. His strong work ethic, attention to detail, and commitment to excellence have earned him recognition as a talented and forward-thinking developer.
-
-When he's not coding or brainstorming new ideas, Osita is likely learning something new or exploring the latest trends in tech. With a bright future ahead, Osita Emeka Michael is a name to watch in the world of web development. </p>
-        </section>
-        <section id="services">
-            <h2>Services</h2>
-            <div class="grid">
-                <div class="card"> <h2>Web Design.</h2> <br>Michael Web offers beatiful, classic and responsive website based on the specification of our clients </div>
-                <div class="card"> <h2>Tutorials In Web Design and Management.</h2> <br>Michael Web offers tutorials on web design and web management for kids, teens and Adult. no matter what age group technology is not to old for you.  </div>
-                <div class="card"> <h2>Microsoft 365. </h2> <br>learn microsoft Word, powerPoint, excel all in one place. </div>
-                <div class="card"> <h2> Video Editing </h2> <br> We produce beatiful video edits for your birthday, presentation, filming etc. </div>
-                <div class="card"> <h2> Video Editing Tutorials </h2> <br><h4> Coming Soon... </h4></div>
-            </div>
-        </section>
-        <section id="contact">
-            <h2>Get In Touch</h2>
-            <form>
-                <input type="text" placeholder="Name">
-                <input type="email" placeholder="Email">
-                <textarea placeholder="Message"></textarea>
-                <button>Send</button>
-            </form>
-            <br>
-            <p>or <br> Contact Us at : 08065516220 <br> For more enquires</p>
-            
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Michael Web</p>
-    </footer>
-    
-
-    <script src="JavaScript/script.js" defer></script>
+// Add event listener to link
+document.querySelector('.splash-link').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('splash-screen').classList.add('hide');
+  setTimeout(() => {
+    window.location.href = 'https://example.com';
+  }, 1000);
+});
+    <?php echo generate_script($config); ?>
+  </script>
 </body>
 </html>
-
-
